@@ -1,0 +1,236 @@
+/* ============================================================
+   DARK MODE — Feu Rouge Intelligent
+   Approche : on surcharge UNIQUEMENT les variables CSS du :root
+   + quelques ajustements ciblés (images, ombres, scrollbars).
+   Aucun composant n'est cassé : tout le design system repose
+   sur les variables, donc le thème bascule d'un seul coup.
+   ============================================================ */
+
+/* ---------- VARIABLES DARK ---------- */
+html[data-theme="dark"] {
+    /* Couleurs de marque */
+    --primary: #3b82f6;
+    --primary-hover: #60a5fa;
+    --primary-soft: #1e293b;
+    --accent: #14b8a6;
+    --accent-soft: #134e4a;
+
+    /* Sémantiques */
+    --danger: #ef4444;
+    --danger-soft: #3f1d1d;
+    --warning: #f59e0b;
+    --warning-soft: #3d2f0f;
+    --success: #22c55e;
+    --success-soft: #14361f;
+
+    /* Encre (texte) — inversée */
+    --ink-900: #f1f5f9;
+    --ink-700: #cbd5e1;
+    --ink-500: #94a3b8;
+    --ink-300: #64748b;
+    --ink-200: #334155;
+    --ink-100: #1e293b;
+    --ink-50:  #0f172a;
+
+    --white: #1e293b;          /* les "cartes blanches" deviennent sombres */
+    --line: #334155;
+    --line-strong: #475569;
+
+    /* Ombres adaptées au sombre */
+    --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5), 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.55), 0 2px 4px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.65);
+}
+
+/* ---------- BASE ---------- */
+html[data-theme="dark"] body {
+    background: #0b1120;
+    color: var(--ink-900);
+}
+
+/* ---------- SIDEBAR ---------- */
+html[data-theme="dark"] .sidebar {
+    background: #111827;
+    border-right-color: #1f2937;
+}
+html[data-theme="dark"] .sidebar-header { border-bottom-color: #1f2937; }
+html[data-theme="dark"] .menu-item:hover { background: #1f2937; }
+html[data-theme="dark"] .menu-item.active {
+    background: #1e3a5f;
+    color: var(--primary);
+}
+html[data-theme="dark"] .sidebar-menu::-webkit-scrollbar-thumb {
+    background: #374151;
+}
+
+/* ---------- TOP NAVBAR ---------- */
+html[data-theme="dark"] .top-navbar {
+    background: #111827;
+    border-color: #1f2937;
+}
+html[data-theme="dark"] .sidebar-toggle {
+    background: #1f2937;
+    border-color: #374151;
+    color: var(--ink-700);
+}
+html[data-theme="dark"] .sidebar-toggle:hover { background: #374151; }
+
+/* ---------- CARDS ---------- */
+html[data-theme="dark"] .card,
+html[data-theme="dark"] .analytics-card,
+html[data-theme="dark"] .led-item,
+html[data-theme="dark"] .incident-item {
+    background: #111827;
+    border-color: #1f2937;
+}
+
+/* ---------- CHAT ---------- */
+html[data-theme="dark"] .chat-box {
+    background: #0f172a;
+    border-color: #1f2937;
+}
+html[data-theme="dark"] .chat-msg.bot {
+    background: #1e293b;
+    border-color: #334155;
+    color: var(--ink-700);
+}
+html[data-theme="dark"] .chat-input {
+    background: #1e293b;
+    border-color: #374151;
+    color: var(--ink-900);
+}
+
+/* ---------- MODE BUTTONS ---------- */
+html[data-theme="dark"] .mode-btn {
+    background: #1e293b;
+    border-color: #374151;
+    color: var(--ink-700);
+}
+html[data-theme="dark"] .mode-btn:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+html[data-theme="dark"] .mode-btn.active {
+    background: var(--primary);
+    color: #fff;
+}
+
+/* ---------- BOUTONS ---------- */
+html[data-theme="dark"] .btn-secondary {
+    background: #1e293b;
+    border-color: #374151;
+    color: var(--ink-700);
+}
+html[data-theme="dark"] .btn-secondary:hover { background: #334155; }
+html[data-theme="dark"] .btn-ghost {
+    border-color: #374151;
+    color: var(--ink-700);
+}
+html[data-theme="dark"] .btn-ghost:hover {
+    background: #3f1d1d;
+    color: var(--danger);
+    border-color: var(--danger);
+}
+
+/* ---------- SWITCHING PANEL ---------- */
+html[data-theme="dark"] #switchingControls {
+    background: #2d2410;
+    border-color: #4a3a12;
+}
+html[data-theme="dark"] #switchingControls h3 i { background: #3d2f0f; }
+
+/* ---------- DROP ZONE ---------- */
+html[data-theme="dark"] .drop-zone {
+    background: #111827;
+    border-color: #374151;
+}
+html[data-theme="dark"] .drop-zone:hover {
+    background: #1e293b;
+    border-color: var(--primary);
+}
+
+/* ---------- TOAST ---------- */
+html[data-theme="dark"] .toast {
+    background: #1e293b;
+    border-color: #334155;
+    color: #f1f5f9;
+}
+
+/* ---------- MAP OVERLAY ---------- */
+html[data-theme="dark"] .map-overlay-controls {
+    background: #111827;
+    border-color: #1f2937;
+}
+
+/* ---------- SCROLLBARS GLOBALES ---------- */
+html[data-theme="dark"] ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+html[data-theme="dark"] ::-webkit-scrollbar-track {
+    background: #0f172a;
+}
+html[data-theme="dark"] ::-webkit-scrollbar-thumb {
+    background: #374151;
+    border-radius: 4px;
+}
+html[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+    background: #475569;
+}
+
+/* ---------- FORMULAIRES ---------- */
+html[data-theme="dark"] select.chat-input,
+html[data-theme="dark"] input.chat-input,
+html[data-theme="dark"] textarea.chat-input {
+    background-color: #1e293b;
+    color: #f1f5f9;
+    border-color: #374151;
+}
+html[data-theme="dark"] select option {
+    background: #1e293b;
+    color: #f1f5f9;
+}
+
+/* ---------- TABLE ANALYTICS ---------- */
+html[data-theme="dark"] #trafficHistoryTable thead {
+    background: #1e293b !important;
+}
+html[data-theme="dark"] #trafficHistoryTable tbody tr {
+    border-bottom-color: #334155 !important;
+}
+html[data-theme="dark"] #trafficHistoryTable th,
+html[data-theme="dark"] #trafficHistoryTable td {
+    color: #cbd5e1 !important;
+}
+
+/* ---------- VIDÉO / IMAGES ---------- */
+html[data-theme="dark"] #videoStream,
+html[data-theme="dark"] #videoFeed {
+    filter: brightness(0.92) contrast(1.02);
+}
+
+/* ---------- FEUX TRICOLORES (déjà sombres, on garde) ---------- */
+html[data-theme="dark"] .traffic-light {
+    background: #0f172a;
+    border-color: #1f2937;
+}
+
+/* ---------- ANIMATION DE TRANSITION DOUCE ---------- */
+html,
+body,
+.sidebar,
+.top-navbar,
+.card,
+.chat-box,
+.chat-input,
+.mode-btn,
+.btn,
+.drop-zone,
+.toast {
+    transition:
+        background-color 0.25s ease,
+        border-color 0.25s ease,
+        color 0.25s ease,
+        box-shadow 0.25s ease;
+}

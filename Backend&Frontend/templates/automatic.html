@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% set active = 'automatic' %}
+{% block title %}Automatique — Feu Rouge Intelligent{% endblock %}
+{% block navbar_title %}Mode Automatique{% endblock %}
+{% block content %}
+<div class="content-section active">
+    <div class="card">
+        <h3><i class="fas fa-clock"></i> Configuration du Timer</h3>
+        <div style="display:flex; gap:18px; margin-bottom:18px; flex-wrap:wrap;">
+            <div style="flex:1; min-width:130px;">
+                <label style="font-size:11px; font-weight:600; color:var(--ink-500); text-transform:uppercase; letter-spacing:0.4px; display:block; margin-bottom:6px;">Jaune (s)</label>
+                <input type="number" id="timerYellow" class="chat-input" value="4">
+            </div>
+            <div style="flex:1; min-width:130px;">
+                <label style="font-size:11px; font-weight:600; color:var(--ink-500); text-transform:uppercase; letter-spacing:0.4px; display:block; margin-bottom:6px;">Vert (s)</label>
+                <input type="number" id="timerGreen" class="chat-input" value="5">
+            </div>
+        </div>
+        <button class="btn btn-primary" onclick="saveTimerConfig()">Sauvegarder</button>
+    </div>
+</div>
+
+<script>
+(function () {
+    // Même clé que dans le helper de base.html (getTimerConfig)
+    const KEY = 'timerConfig';
+    const DEFAULTS = { yellow: 4, green: 5 };
+
+    function readConfig() {
+        try {
+            const raw = localStorage.getItem(KEY);
+            if (!raw) return null;
+            const c = JSON.parse(raw);
+            if (!(Number(c.yellow) > 0) || !(Number(c.green) > 0)) return null;
+            return { yellow: Number(c.yellow), green: Number(c.green) };
+        } catch (e) {
+            return null;
+        }
+    }
+
+    // Envoie la configuration au serveur Python (c'est lui qui pilote les feux)
+    async function pushToServer(cfg) {
+        const res = await fetch('/api/timer_config', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(cfg)
+        });
+        return res.json();
+    }
+
+    // Au chargement de la page : on remplit les champs avec les valeurs sauvegardées
+    const saved = readConfig() || DEFAULTS;
+    document.getElementById('timerYellow').value = saved.yellow;
+    document.getElementById('timerGreen').value  = saved.green;
+
+    // Si une config existe dans le navigateur, on la renvoie au serveur
+    // (utile après un redémarrage de app.py, qui repart à 4 s / 5 s)
+    if (readConfig()) {
+        pushToServer(saved).catch(function () {});
+    }
+
+    // Bouton « Sauvegarder »
+    window.saveTimerConfig = async function () {
+        const y = parseInt(document.getElementById('timerYellow').value, 10);
+        const g = parseInt(document.getElementById('timerGreen').value, 10);
+
+        if (!(y >= 1 && y <= 60) || !(g >= 1 && g <= 60)) {
+            if (typeof showToast === 'function') showToast('Entrez des valeurs entre 1 et 60 secondes', 'error');
+            return;
+        }
+
+        // 1) Sauvegarde locale (lisible par toutes les pages)
+        try {
+            localStorage.setItem(KEY, JSON.stringify({ yellow: y, green: g }));
+        } catch (e) {
+            if (typeof showToast === 'function') showToast('Stockage du navigateur bloqué', 'error');
+        }
+
+        // 2) Envoi au serveur : les feux utilisent ces durées dès le prochain cycle
+        try {
+            const r = await pushToServer({ yellow: y, green: g });
+            if (r.ok) {
+                if (typeof showToast === 'function') showToast('Timer appliqué : jaune ' + y + 's, vert ' + g + 's');
+            } else {
+                if (typeof showToast === 'function') showToast(r.error || 'Erreur serveur', 'error');
+            }
+        } catch (e) {
+            if (typeof showToast === 'function') showToast('Sauvegardé localement, serveur injoignable', 'error');
+        }
+    };
+})();
+</script>
+{% endblock %}

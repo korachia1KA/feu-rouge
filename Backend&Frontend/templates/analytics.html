@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% set active = 'analytics' %}
+{% block title %}Analytics — Feu Rouge Intelligent{% endblock %}
+{% block navbar_title %}Analytics & Historique{% endblock %}
+{% block content %}
+<div class="content-section active">
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px,1fr)); gap:16px; margin-bottom:18px;">
+        <div class="analytics-card"><h4>Moyenne Véhicules</h4><div class="value" id="avgVehicles">-</div></div>
+        <div class="analytics-card"><h4>Total Entrées</h4><div class="value" id="historyCount">-</div></div>
+    </div>
+    <div class="card">
+        <h3>Historique du Trafic</h3>
+        <div id="trafficHistoryTable" style="max-height:400px; overflow:auto;"></div>
+    </div>
+</div>
+{% endblock %}

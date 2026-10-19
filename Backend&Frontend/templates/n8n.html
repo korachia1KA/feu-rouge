@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% set active = 'n8n' %}
+{% block title %}Intégration N8N — Feu Rouge Intelligent{% endblock %}
+{% block navbar_title %}Intégration N8N{% endblock %}
+{% block content %}
+<div class="content-section active">
+    <div class="card">
+        <h3>État N8N</h3>
+        <p style="font-size:13.5px;">Statut : <span id="n8nStatus" style="font-weight:600;">Vérification...</span></p>
+        <p style="font-size:12.5px; color:var(--ink-500); margin-top:6px;">Webhook : http://localhost:5678/webhook/traffic-alert</p>
+    </div>
+</div>
+{% endblock %}

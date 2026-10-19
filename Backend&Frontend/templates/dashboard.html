@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% set active = 'dashboard' %}
+{% block title %}Tableau de bord — Feu Rouge Intelligent{% endblock %}
+{% block navbar_title %}Système de Feux Intelligents{% endblock %}
+{% block content %}
+<div class="content-section active">
+    <div class="container">
+        <div class="card">
+            <h3><i class="fas fa-sliders-h"></i> Mode de Contrôle</h3>
+            <div class="mode-selector">
+                <div class="mode-btn active" data-mode="manual" onclick="setMode('manual')"><i class="fas fa-hand-pointer"></i> Manuel</div>
+                <div class="mode-btn" data-mode="switching" onclick="setMode('switching')" style="border: 2px solid var(--warning);"><i class="fas fa-random"></i> Switching</div>
+                <div class="mode-btn" data-mode="traffic" onclick="setMode('traffic')"><i class="fas fa-car"></i> Trafic IA</div>
+                <div class="mode-btn" data-mode="timer" onclick="setMode('timer')"><i class="fas fa-clock"></i> Timer</div>
+                <div class="mode-btn" data-mode="chatbot" onclick="setMode('chatbot')"><i class="fas fa-robot"></i> Chatbot</div>
+            </div>
+
+            <div class="traffic-light-wrap">
+                <div class="traffic-light" id="trafficLight1">
+                    <h4>Feu 1 (Av. Mohamed VI)</h4>
+                    <div class="light-stack">
+                        <div class="light red" id="red1"></div>
+                        <div class="light yellow" id="yellow1"></div>
+                        <div class="light green" id="green1"></div>
+                    </div>
+                </div>
+                <div class="traffic-light" id="trafficLight2">
+                    <h4>Feu 2 (Rue El Khattabi)</h4>
+                    <div class="light-stack">
+                        <div class="light red" id="red2"></div>
+                        <div class="light yellow" id="yellow2"></div>
+                        <div class="light green" id="green2"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="switchingControls">
+                <h3 style="color:#c2410c"><i class="fas fa-gamepad"></i> Contrôle Direct</h3>
+                <div class="switch-btn-grid">
+                    <button class="btn btn-primary" onclick="apiCall('/api/switch', {target:1})">⬅️ Feu 1 VERT</button>
+                    <button class="btn btn-primary" onclick="apiCall('/api/switch', {target:2})">Feu 2 VERT ➡️</button>
+                    <button class="btn btn-danger" onclick="apiCall('/api/pause', {})">⏸️ PAUSE</button>
+                    <button class="btn btn-secondary" onclick="apiCall('/api/resume', {})">▶️ REPRISE</button>
+                </div>
+            </div>
+
+            <div id="manualMsg" style="text-align:center; color:var(--ink-500); margin-top:15px; font-style:italic; font-size:13px;">
+                Passez en mode "Switching" pour afficher les boutons de contrôle des feux.
+            </div>
+        </div>
+
+        <div>
+            <div class="card">
+                <h3><i class="fas fa-video"></i> Flux Vidéo YOLO</h3>
+                <img id="videoFeed" src="/video_feed" style="width:100%; border-radius:8px;">
+            </div>
+            <div class="card">
+                <h3><i class="fas fa-chart-bar"></i> Trafic Temps Réel</h3>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; text-align:center;">
+                    <div style="background:var(--primary-soft); padding:12px; border-radius:8px; border:1px solid var(--line);">
+                        <div style="font-size:20px; font-weight:700; color:var(--primary);" id="statCars">0</div>
+                        <small style="color:var(--ink-500);">Voitures</small>
+                    </div>
+                    <div style="background:var(--success-soft); padding:12px; border-radius:8px; border:1px solid var(--line);">
+                        <div style="font-size:20px; font-weight:700; color:var(--success);" id="statPedestrians">0</div>
+                        <small style="color:var(--ink-500);">Piétons</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

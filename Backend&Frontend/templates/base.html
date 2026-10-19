@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}Feu Rouge Intelligent{% endblock %}</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+<!-- ✅ DARK MODE : CSS (chargé avant le style inline pour être surchargeable) -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dark-mode.css') }}">
+
+<style>
+/* ================= DESIGN SYSTEM — CORPORATE PREMIUM ================= */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+    --primary: #1e3a5f;
+    --primary-hover: #16304f;
+    --primary-soft: #eef2f7;
+    --accent: #0f766e;
+    --accent-soft: #ecfdf5;
+    --danger: #b91c1c;
+    --danger-soft: #fef2f2;
+    --warning: #b45309;
+    --warning-soft: #fffbeb;
+    --success: #15803d;
+    --success-soft: #f0fdf4;
+    --ink-900: #0f172a;
+    --ink-700: #334155;
+    --ink-500: #64748b;
+    --ink-300: #cbd5e1;
+    --ink-200: #e2e8f0;
+    --ink-100: #f1f5f9;
+    --ink-50:  #f8fafc;
+    --white: #ffffff;
+    --line: #e5e9f0;
+    --line-strong: #d4dbe5;
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+    --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.05);
+    --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.08), 0 1px 2px rgba(15, 23, 42, 0.04);
+    --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.07), 0 2px 4px rgba(15, 23, 42, 0.04);
+    --shadow-lg: 0 10px 30px rgba(15, 23, 42, 0.10);
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--ink-50);
+    min-height: 100vh;
+    color: var(--ink-900);
+    display: flex;
+    overflow-x: hidden;
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ================= SIDEBAR ================= */
+.sidebar { width: 268px; background: var(--white); border-right: 1px solid var(--line); display: flex; flex-direction: column; position: fixed; height: 100%; z-index: 100; transition: transform 0.25s ease; }
+.sidebar-header { padding: 20px 22px; border-bottom: 1px solid var(--line); display: flex; gap: 12px; align-items: center; min-height: 72px; }
+.sidebar-logo i { font-size: 20px; color: var(--primary); }
+.sidebar-title { font-size: 16px; font-weight: 600; color: var(--ink-900); letter-spacing: -0.2px; line-height: 1.2; }
+.sidebar-menu { padding: 14px 0 20px; flex-grow: 1; overflow-y: auto; }
+.sidebar-menu::-webkit-scrollbar { width: 6px; }
+.sidebar-menu::-webkit-scrollbar-thumb { background: var(--ink-200); border-radius: 3px; }
+.menu-section { font-size: 11px; font-weight: 600; color: var(--ink-500); padding: 16px 22px 6px; text-transform: uppercase; letter-spacing: 0.6px; }
+.menu-item { display: flex; align-items: center; padding: 9px 22px; color: var(--ink-700); text-decoration: none; transition: background 0.15s, color 0.15s; gap: 12px; font-weight: 500; font-size: 13.5px; border-left: 2px solid transparent; margin: 1px 0; }
+.menu-item i { font-size: 14px; width: 18px; text-align: center; color: var(--ink-500); transition: color 0.15s; }
+.menu-item:hover { background: var(--ink-50); color: var(--ink-900); }
+.menu-item:hover i { color: var(--primary); }
+.menu-item.active { background: var(--primary-soft); color: var(--primary); border-left-color: var(--primary); font-weight: 600; }
+.menu-item.active i { color: var(--primary); }
+
+/* ================= MAIN ================= */
+.main-content { margin-left: 268px; flex-grow: 1; padding: 22px 28px; transition: margin-left 0.25s; min-height: 100vh; }
+.top-navbar { display: flex; justify-content: space-between; align-items: center; background: var(--white); padding: 14px 22px; border-radius: var(--radius-md); margin-bottom: 22px; border: 1px solid var(--line); box-shadow: var(--shadow-xs); }
+.navbar-left { display: flex; align-items: center; gap: 14px; }
+.navbar-title { font-size: 17px; font-weight: 600; color: var(--ink-900); letter-spacing: -0.2px; }
+.sidebar-toggle { border: 1px solid var(--line); background: var(--white); font-size: 15px; cursor: pointer; color: var(--ink-700); width: 36px; height: 36px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; transition: background 0.15s, border-color 0.15s; }
+.sidebar-toggle:hover { background: var(--ink-100); border-color: var(--line-strong); }
+.status-badge-nav { background: var(--ink-100); color: var(--ink-700); padding: 7px 14px; border-radius: 20px; font-weight: 600; font-size: 12px; letter-spacing: 0.2px; border: 1px solid var(--line); display: flex; align-items: center; gap: 7px; }
+.status-badge-nav i { color: var(--success); font-size: 7px; }
+
+/* ================= SECTIONS ================= */
+.content-section { display: block; opacity: 1; transform: none; }
+.container { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+
+/* ================= CARDS ================= */
+.card { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius-md); padding: 22px; box-shadow: var(--shadow-xs); margin-bottom: 20px; }
+.card h3 { font-size: 14.5px; font-weight: 600; margin-bottom: 18px; color: var(--ink-900); display: flex; gap: 10px; align-items: center; letter-spacing: -0.1px; }
+.card h3 i { color: var(--primary); font-size: 14px; width: 30px; height: 30px; background: var(--primary-soft); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; }
+
+/* ================= MODE SELECTOR ================= */
+.mode-selector { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 22px; }
+.mode-btn { padding: 9px 16px; border-radius: var(--radius-sm); background: var(--white); border: 1px solid var(--line-strong); cursor: pointer; font-weight: 500; font-size: 13px; display: flex; gap: 8px; align-items: center; transition: all 0.15s; color: var(--ink-700); user-select: none; }
+.mode-btn i { font-size: 12px; color: var(--ink-500); }
+.mode-btn:hover { border-color: var(--primary); color: var(--primary); }
+.mode-btn:hover i { color: var(--primary); }
+.mode-btn.active { background: var(--primary); color: var(--white); border-color: var(--primary); font-weight: 600; }
+.mode-btn.active i { color: var(--white); }
+
+/* ================= BUTTONS ================= */
+.btn { padding: 9px 16px; border: 1px solid transparent; border-radius: var(--radius-sm); font-weight: 500; font-size: 13px; cursor: pointer; transition: all 0.15s; display: inline-flex; gap: 8px; align-items: center; justify-content: center; font-family: inherit; line-height: 1.2; }
+.btn-primary { background: var(--primary); color: var(--white); border-color: var(--primary); }
+.btn-primary:hover { background: var(--primary-hover); border-color: var(--primary-hover); }
+.btn-danger { background: var(--danger); color: var(--white); border-color: var(--danger); }
+.btn-danger:hover { background: #991b1b; border-color: #991b1b; }
+.btn-secondary { background: var(--white); color: var(--ink-700); border-color: var(--line-strong); }
+.btn-secondary:hover { background: var(--ink-100); border-color: var(--ink-300); }
+.btn-ghost { background: transparent; border-color: var(--line-strong); color: var(--ink-700); }
+.btn-ghost:hover { background: var(--ink-100); color: var(--danger); border-color: var(--danger); }
+
+/* ================= TRAFFIC LIGHTS ================= */
+.traffic-light-wrap { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 22px; }
+.traffic-light { background: var(--ink-900); border-radius: var(--radius-md); padding: 20px 18px; text-align: center; border: 2px solid transparent; transition: border-color 0.2s; }
+.traffic-light.active { border-color: var(--primary); }
+.traffic-light h4 { color: var(--white); margin-bottom: 16px; font-size: 13px; font-weight: 500; letter-spacing: 0.1px; opacity: 0.92; }
+.light-stack { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.light { width: 44px; height: 44px; border-radius: 50%; background: #2a3547; transition: background 0.2s, box-shadow 0.2s; }
+.light.on { box-shadow: 0 0 18px 3px; }
+.light.red.on { background: #ef4444; box-shadow: 0 0 18px 3px rgba(239, 68, 68, 0.7); }
+.light.yellow.on { background: #f59e0b; box-shadow: 0 0 18px 3px rgba(245, 158, 11, 0.7); }
+.light.green.on { background: #22c55e; box-shadow: 0 0 18px 3px rgba(34, 197, 94, 0.7); }
+
+/* ================= SWITCHING PANEL ================= */
+#switchingControls { display: none; background: var(--warning-soft); border: 1px solid #fde68a; border-radius: var(--radius-md); padding: 18px; text-align: center; margin-top: 18px; }
+#switchingControls h3 { color: var(--warning); font-size: 14px; margin-bottom: 14px; justify-content: center; font-weight: 600; }
+#switchingControls h3 i { background: #fef3c7; color: var(--warning); }
+.switch-btn-grid { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+/* ================= LEDS ================= */
+.led-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; }
+.led-item { border: 1px solid var(--line); border-radius: var(--radius-md); padding: 18px 16px; text-align: center; background: var(--white); transition: border-color 0.15s, box-shadow 0.15s; }
+.led-item:hover { border-color: var(--line-strong); box-shadow: var(--shadow-xs); }
+.led-item h4 { font-size: 13px; font-weight: 600; margin: 12px 0 12px; color: var(--ink-700); }
+.led-indicator { width: 54px; height: 54px; border-radius: 50%; margin: 0 auto; border: 2px solid var(--line); opacity: 0.35; transition: opacity 0.25s, box-shadow 0.25s, border-color 0.25s; background: var(--ink-100); }
+.led-indicator.on { opacity: 1; border-color: rgba(255, 255, 255, 0.4); }
+.led-indicator.red { background: #ef4444; }
+.led-indicator.yellow { background: #f59e0b; }
+.led-indicator.green { background: #22c55e; }
+.led-indicator.on.red { box-shadow: 0 0 16px rgba(239, 68, 68, 0.6); }
+.led-indicator.on.yellow { box-shadow: 0 0 16px rgba(245, 158, 11, 0.6); }
+.led-indicator.on.green { box-shadow: 0 0 16px rgba(34, 197, 94, 0.6); }
+.led-controls { display: flex; gap: 6px; justify-content: center; }
+.led-controls .btn { padding: 6px 12px; font-size: 12px; }
+
+/* ================= CHAT ================= */
+.chat-box { height: 300px; overflow-y: auto; background: var(--ink-50); border-radius: var(--radius-sm); padding: 14px; margin-bottom: 12px; border: 1px solid var(--line); }
+.chat-box::-webkit-scrollbar { width: 6px; }
+.chat-box::-webkit-scrollbar-thumb { background: var(--ink-200); border-radius: 3px; }
+.chat-msg { margin-bottom: 10px; padding: 9px 13px; border-radius: var(--radius-sm); max-width: 80%; font-size: 13.5px; line-height: 1.45; }
+.chat-msg.user { background: var(--primary); color: var(--white); margin-left: auto; }
+.chat-msg.bot { background: var(--white); color: var(--ink-700); border: 1px solid var(--line); }
+.chat-input { width: 100%; padding: 10px 13px; border-radius: var(--radius-sm); border: 1px solid var(--line-strong); font-family: inherit; font-size: 13.5px; background: var(--white); color: var(--ink-900); transition: border-color 0.15s, box-shadow 0.15s; }
+.chat-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(30, 58, 95, 0.1); }
+
+/* ================= ANALYTICS ================= */
+.analytics-card { background: var(--white); border: 1px solid var(--line); color: var(--ink-900); border-radius: var(--radius-md); padding: 22px; text-align: left; box-shadow: var(--shadow-xs); }
+.analytics-card h4 { font-size: 12px; font-weight: 500; color: var(--ink-500); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.6px; }
+.analytics-card .value { font-size: 28px; font-weight: 700; color: var(--ink-900); letter-spacing: -0.5px; }
+
+/* ================= DROP ZONE ================= */
+.drop-zone { border: 2px dashed var(--line-strong); border-radius: var(--radius-md); padding: 28px; text-align: center; cursor: pointer; transition: border-color 0.15s, background 0.15s; background: var(--white); }
+.drop-zone:hover { border-color: var(--primary); background: var(--primary-soft); }
+
+/* ================= TOAST ================= */
+.toast { position: fixed; bottom: 24px; right: 24px; padding: 12px 20px; border-radius: var(--radius-sm); background: var(--ink-900); color: var(--white); font-weight: 500; font-size: 13.5px; opacity: 0; transform: translateY(12px); transition: opacity 0.2s, transform 0.2s; z-index: 9999; box-shadow: var(--shadow-lg); border: 1px solid rgba(255, 255, 255, 0.08); }
+.toast.show { opacity: 1; transform: translateY(0); }
+
+/* ================= MAP ================= */
+#section-map .container { display: grid; grid-template-columns: 3fr 1fr; gap: 18px; height: calc(100vh - 140px); }
+.map-card { position: relative; padding: 0 !important; overflow: hidden; height: 100%; border: 1px solid var(--line); }
+#map { width: 100%; height: 100%; z-index: 1; border-radius: var(--radius-md); }
+.map-overlay-controls { position: absolute; top: 16px; left: 16px; z-index: 500; background: var(--white); padding: 10px 14px; border-radius: var(--radius-sm); box-shadow: var(--shadow-md); display: flex; gap: 12px; align-items: center; border: 1px solid var(--line); }
+.map-overlay-controls h3 { font-size: 13px; font-weight: 600; margin: 0; padding: 0; }
+.map-overlay-controls h3 i { background: transparent; width: auto; height: auto; color: var(--primary); }
+.incidents-card { display: flex; flex-direction: column; height: 100%; overflow: hidden; }
+.incidents-scroll-area { flex-grow: 1; overflow-y: auto; padding-right: 4px; margin-top: 12px; }
+.incidents-scroll-area::-webkit-scrollbar { width: 5px; }
+.incidents-scroll-area::-webkit-scrollbar-thumb { background: var(--ink-200); border-radius: 3px; }
+.incident-item { background: var(--white); border: 1px solid var(--line); border-left: 3px solid var(--primary); padding: 11px 13px; border-radius: var(--radius-sm); margin-bottom: 8px; }
+.incident-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; font-size: 12.5px; font-weight: 600; color: var(--ink-900); }
+.incident-badge { padding: 3px 10px; border-radius: 4px; font-size: 11px; font-weight: 600; margin-right: 6px; }
+.incident-badge.roadwork { background: var(--warning-soft); color: var(--warning); }
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 1024px) {
+    .container { grid-template-columns: 1fr; }
+    #section-map .container { grid-template-columns: 1fr; height: auto; }
+    #map { height: 400px; }
+    .sidebar { transform: translateX(-268px); }
+    .sidebar.show { transform: translateX(0); }
+    .main-content { margin-left: 0; padding: 16px; }
+    .top-navbar { padding: 12px 16px; }
+    .navbar-title { font-size: 15px; }
+}
+@media (max-width: 640px) {
+    .card { padding: 16px; }
+    .mode-btn { padding: 8px 12px; font-size: 12px; }
+    .led-indicator { width: 46px; height: 46px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <div class="sidebar-title">🚦 Traffic Control</div>
+    </div>
+    <nav class="sidebar-menu">
+        <div class="menu-section">Dashboard</div>
+        <a href="/" class="menu-item {% if active == 'dashboard' %}active{% endif %}"><i class="fas fa-home"></i> <span>Tableau de bord</span></a>
+
+        <div class="menu-section">Contrôles</div>
+        <a href="/control" class="menu-item {% if active == 'control' %}active{% endif %}"><i class="fas fa-sliders-h"></i> <span>Manuel & LEDs</span></a>
+        <a href="/voice" class="menu-item {% if active == 'voice' %}active{% endif %}"><i class="fas fa-microphone"></i> <span>Contrôle Vocal</span></a>
+        <a href="/automatic" class="menu-item {% if active == 'automatic' %}active{% endif %}"><i class="fas fa-magic"></i> <span>Automatique</span></a>
+
+        <div class="menu-section">Surveillance</div>
+        <a href="/map" class="menu-item {% if active == 'map' %}active{% endif %}"><i class="fas fa-map-marked-alt"></i> <span>Carte Live</span></a>
+        <a href="/video" class="menu-item {% if active == 'video' %}active{% endif %}"><i class="fas fa-video"></i> <span>Vidéo & IA</span></a>
+
+        <div class="menu-section">Données & Alertes</div>
+        <a href="/incidents" class="menu-item {% if active == 'incidents' %}active{% endif %}"><i class="fas fa-exclamation-triangle"></i> <span>Incidents</span></a>
+        <a href="/analytics" class="menu-item {% if active == 'analytics' %}active{% endif %}"><i class="fas fa-chart-line"></i> <span>Analytics</span></a>
+        <a href="/n8n" class="menu-item {% if active == 'n8n' %}active{% endif %}"><i class="fas fa-bolt"></i> <span>Intégration N8N</span></a>
+        <a href="/chat" class="menu-item {% if active == 'chat' %}active{% endif %}"><i class="fas fa-robot"></i> <span>Chatbot IA</span></a>
+    </nav>
+</aside>
+
+<!-- Main Content -->
+<div class="main-content" id="mainContent">
+    <div class="top-navbar">
+        <div class="navbar-left">
+            <button class="sidebar-toggle" onclick="document.getElementById('sidebar').classList.toggle('show')"><i class="fas fa-bars"></i></button>
+            <h1 class="navbar-title">{% block navbar_title %}Système de Feux Intelligents{% endblock %}</h1>
+        </div>
+        <div class="navbar-right" style="display:flex; align-items:center; gap:10px;">
+            <div class="status-badge-nav" id="topStatusBadge">
+                <i class="fas fa-circle" style="font-size: 8px;"></i> <span id="topStatusText">Mode Manuel</span>
+            </div>
+            <!-- ✅ BOUTON DARK MODE -->
+            <button id="darkModeToggle" class="sidebar-toggle" title="Basculer le thème">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="content-wrapper">
+        {% block content %}{% endblock %}
+    </div>
+</div>
+
+<div id="toast" class="toast">Action effectuée</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<!-- ✅ DARK MODE : JS (chargé en premier pour éviter le flash) -->
+<script src="{{ url_for('static', filename='js/dark-mode.js') }}"></script>
+
+<script>
+/* ============================================================
+   SCRIPT GLOBAL — identique à l'original, partagé par toutes les pages
+   ============================================================ */
+
+// ==================== COMMANDE VOCALE ====================
+function initVoiceControl() {
+    const voiceBtn = document.getElementById('voiceBtn');
+    const voiceStatus = document.getElementById('voiceStatus');
+    if (!voiceBtn || !voiceStatus) return;
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+        voiceStatus.innerText = "❌ Votre navigateur ne supporte pas la reconnaissance vocale.";
+        voiceBtn.disabled = true;
+        return;
+    }
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'fr-FR';
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    voiceBtn.addEventListener('click', () => {
+        try {
+            recognition.start();
+            voiceBtn.classList.add('btn-danger');
+            voiceBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Écoute en cours...';
+            voiceStatus.innerText = "🎤 Parlez maintenant...";
+        } catch (e) { voiceStatus.innerText = "Erreur : Le micro est peut-être déjà actif."; }
+    });
+    recognition.onend = () => {
+        voiceBtn.classList.remove('btn-danger');
+        voiceBtn.innerHTML = '<i class="fas fa-microphone"></i> Appuyer pour parler';
+        voiceStatus.innerText = "Traitement...";
+    };
+    recognition.onresult = async (event) => {
+        const transcript = event.results[0][0].transcript;
+        voiceStatus.innerText = `🗣️ Vous avez dit : "${transcript}"`;
+        try {
+            const res = await fetch('/api/chat', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ question: transcript }) });
+            const data = await res.json();
+            voiceStatus.innerHTML = `✅ <b>Action :</b> ${data.answer}`;
+            speakResponse(data.answer);
+        } catch (e) { voiceStatus.innerText = "❌ Erreur de communication avec le serveur."; }
+    };
+    recognition.onerror = (event) => { voiceStatus.innerText = "❌ Erreur de reconnaissance : " + event.error; };
+}
+function speakResponse(text) {
+    const speech = new SpeechSynthesisUtterance(text);
+    speech.lang = 'fr-FR';
+    window.speechSynthesis.speak(speech);
+}
+
+// ==================== MODE SWITCHING ====================
+document.querySelectorAll('.mode-btn').forEach(btn => {
+    btn.addEventListener('click', async function() {
+        const mode = this.getAttribute('data-mode');
+        updateModeUI(mode);
+        try {
+            await fetch('/api/set_mode', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ mode }) });
+            showToast(`Mode ${mode} activé`);
+        } catch(e) { showToast('Erreur lors du changement de mode', 'error'); }
+    });
+});
+
+function updateModeUI(mode) {
+    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+    const activeBtn = document.querySelector(`.mode-btn[data-mode="${mode}"]`);
+    if(activeBtn) activeBtn.classList.add('active');
+    const panel = document.getElementById('switchingControls');
+    const msg = document.getElementById('manualMsg');
+    if (panel && msg) {
+        if (mode === 'switching') { panel.style.display = 'block'; msg.style.display = 'none'; }
+        else { panel.style.display = 'none'; msg.style.display = 'block'; }
+    }
+    const statusText = document.getElementById('topStatusText');
+    if(statusText) statusText.innerText = "Mode " + mode.toUpperCase();
+}
+
+// ==================== POLLING STATUS ====================
+async function fetchStatus() {
+    try {
+        const res = await fetch('/api/status');
+        const data = await res.json();
+        const currentActive = document.querySelector('.mode-btn.active');
+        if (!currentActive || currentActive.getAttribute('data-mode') !== data.control_mode) {
+            updateModeUI(data.control_mode);
+        }
+        for(let k in data.leds) {
+            const el = document.getElementById(k);
+            const el2 = document.getElementById('led'+k.charAt(0).toUpperCase()+k.slice(1));
+            if(el) el.classList.toggle('on', data.leds[k]);
+            if(el2) el2.classList.toggle('on', data.leds[k]);
+        }
+        const tl1 = document.getElementById('trafficLight1');
+        const tl2 = document.getElementById('trafficLight2');
+        if(tl1) tl1.classList.toggle('active', data.current_traffic_light===1);
+        if(tl2) tl2.classList.toggle('active', data.current_traffic_light===2);
+        if(data.stats) {
+            const sc = document.getElementById('statCars');
+            const sp = document.getElementById('statPedestrians');
+            if(sc) sc.innerText = data.stats.cars || 0;
+            if(sp) sp.innerText = data.stats.pedestrians || 0;
+        }
+        const n8 = document.getElementById('n8nStatus');
+        if(n8) n8.innerText = data.n8n_enabled ? "Connecté ✅" : "Désactivé ❌";
+    } catch(e) {}
+}
+
+// ==================== API CALLS ====================
+async function apiCall(url, data) {
+    try {
+        const res = await fetch(url, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data) });
+        const json = await res.json();
+        if(json.ok) { showToast("Commande envoyée"); fetchStatus(); }
+        else { showToast(json.error || "Erreur", "error"); }
+    } catch(e) { showToast("Erreur API", "error"); }
+}
+
+window.switchTrafficLight = (t) => apiCall('/api/switch', {target:t});
+window.pauseTrafficLights = () => apiCall('/api/pause', {});
+window.resumeTrafficLights = () => apiCall('/api/resume', {});
+window.setLED = (cmd) => apiCall('/api/set_led', {cmd});
+window.detectTrafficIncidents = async () => {
+    showToast("📡 Scan des alentours en cours...", "info");
+    try {
+        const res = await fetch('/api/detect_traffic_incidents', { method: 'POST', headers: {'Content-Type': 'application/json'} });
+        const data = await res.json();
+        if (data.ok) {
+            if (data.incidents && data.incidents.length > 0) { showToast(`⚠️ ${data.incidents.length} incident(s) détecté(s) !`, "error"); }
+            else { showToast("✅ R.A.S : Aucun incident détecté sur la carte.", "success"); }
+            loadIncidents();
+            if(typeof updateMapMarkers === 'function') updateMapMarkers();
+        } else { showToast("❌ Erreur API : " + (data.error || "Problème serveur"), "error"); }
+    } catch (e) { showToast("❌ Erreur de connexion au serveur", "error"); }
+};
+
+window.createIncident = async () => {
+    const type = document.getElementById('incType').value;
+    await apiCall('/api/incidents', {type, light_id:1, severity:'medium'});
+    loadIncidents();
+};
+
+// ==================== MAP LOGIC ====================
+let map;
+let markers = {};
+function initMap() {
+    const mapEl = document.getElementById('map');
+    if (!mapEl || typeof L === 'undefined') return;
+    const elJadida = [33.2585, -8.5087];
+    map = L.map('map').setView(elJadida, 15);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap contributors' }).addTo(map);
+    setInterval(updateMapMarkers, 3000);
+}
+function getColoredIcon(color) {
+    let url = 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png';
+    if(color === 'green') url = 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png';
+    if(color === 'yellow') url = 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-gold.png';
+    return new L.Icon({ iconUrl: url, shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png', iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41] });
+}
+async function updateMapMarkers() {
+    try {
+        const resMap = await fetch('/api/map');
+        const dataMap = await resMap.json();
+        const resInc = await fetch('/api/incidents');
+        const dataInc = await resInc.json();
+        dataMap.lights.forEach(l => {
+            let color = l.status === 'green' ? 'green' : (l.status === 'yellow' ? 'yellow' : 'red');
+            let pos = [l.position.lat, l.position.lng];
+            if (!markers[l.id]) { markers[l.id] = L.marker(pos, {icon: getColoredIcon(color)}).addTo(map).bindPopup(`<strong>${l.name}</strong><br>État: ${l.status.toUpperCase()}`); }
+            else { markers[l.id].setIcon(getColoredIcon(color)); }
+        });
+        dataInc.incidents.forEach(inc => {
+            let key = 'inc_' + inc.id;
+            if (inc.coordinates && !markers[key]) {
+                let pos = [inc.coordinates.lat, inc.coordinates.lng];
+                markers[key] = L.marker(pos).addTo(map).bindPopup(`<strong>⚠️ ${inc.type.toUpperCase()}</strong><br>${inc.location}`);
+            }
+        });
+    } catch(e) { console.error("Erreur Map", e); }
+}
+
+// ==================== CHATBOT ====================
+window.fillChat = (text) => { document.getElementById('chatInput').value = text; sendChat(); };
+async function sendChat() {
+    const i = document.getElementById('chatInput');
+    if (!i) return;
+    const t = i.value; if(!t) return;
+    document.getElementById('chatBox').innerHTML += `<div class="chat-msg user">${t}</div>`;
+    i.value="";
+    const res = await fetch('/api/chat', {method:'POST', body:JSON.stringify({question:t})});
+    const d = await res.json();
+    document.getElementById('chatBox').innerHTML += `<div class="chat-msg bot">${d.answer}</div>`;
+    const chatBox = document.getElementById('chatBox');
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+// ==================== UTILS ====================
+function showToast(msg, type='') {
+    const t = document.getElementById('toast');
+    t.innerText = msg; t.className = `toast show ${type}`;
+    setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+async function loadIncidents() {
+    const listSmall = document.getElementById('incidentsList');
+    const listFull = document.getElementById('incidentsListFull');
+    if (!listSmall && !listFull) return;
+    const res = await fetch('/api/incidents');
+    const data = await res.json();
+    if(listSmall) {
+        listSmall.innerHTML = data.incidents.length ? data.incidents.map(i => `
+            <div class="incident-item">
+                <div class="incident-header"><span>${i.type}</span></div>
+                <small style="color: var(--ink-500);">${new Date(i.timestamp).toLocaleTimeString()}</small>
+            </div>
+        `).join('') : '<p style="text-align:center;color:var(--ink-500);margin-top:20px;font-size:13px;">Aucun incident</p>';
+    }
+    if(listFull) {
+        listFull.innerHTML = data.incidents.length ? data.incidents.map(i => `
+            <div style="background:var(--white); padding:14px; border-radius:8px; margin-bottom:10px; border-left:4px solid var(--danger); display:flex; justify-content:space-between; align-items:center; border:1px solid var(--line);">
+                <div>
+                    <h4 style="margin:0; color:var(--danger); font-size:13.5px;">${i.type}</h4>
+                    <p style="margin:4px 0 0; color:var(--ink-500); font-size:12.5px;">Lieu: ${i.location} | Gravité: ${i.severity || 'Moyenne'}</p>
+                    <small style="color:var(--ink-300); font-size:11px;">${i.timestamp}</small>
+                </div>
+                <button class="btn btn-danger" onclick="apiCall('/api/incidents', {id:${i.id}, method:'DELETE'})">Clôturer</button>
+            </div>
+        `).join('') : '<div style="text-align:center; padding:40px; color:var(--ink-500);"><i class="fas fa-check-circle" style="font-size:36px; margin-bottom:10px; color:var(--success);"></i><br>Aucun incident actif.</div>';
+    }
+}
+
+async function loadAnalytics() {
+    try {
+        const avgEl = document.getElementById('avgVehicles');
+        const cntEl = document.getElementById('historyCount');
+        const tableDiv = document.getElementById('trafficHistoryTable');
+        if (!avgEl && !cntEl && !tableDiv) return;
+        const res = await fetch('/api/analytics');
+        const data = await res.json();
+        const history = data.history || [];
+        if(history.length > 0) {
+            let totalVehicles = 0;
+            history.forEach(h => totalVehicles += (h.vehicles || 0));
+            if(avgEl) avgEl.innerText = Math.round(totalVehicles / history.length);
+            if(cntEl) cntEl.innerText = history.length;
+        }
+        if(tableDiv) {
+            if(history.length === 0) { tableDiv.innerHTML = '<p style="text-align:center; padding:20px; color:var(--ink-500);">Aucune donnée historique.</p>'; }
+            else {
+                let html = '<table style="width:100%; border-collapse:collapse; font-size:13px;">';
+                html += '<thead style="background:var(--ink-100);"><tr><th style="padding:10px; text-align:left; font-weight:600; color:var(--ink-500); font-size:11px; text-transform:uppercase; letter-spacing:0.4px;">Heure</th><th style="padding:10px; font-weight:600; color:var(--ink-500); font-size:11px; text-transform:uppercase; letter-spacing:0.4px;">Voitures</th><th style="padding:10px; font-weight:600; color:var(--ink-500); font-size:11px; text-transform:uppercase; letter-spacing:0.4px;">Bus/Camions</th><th style="padding:10px; font-weight:600; color:var(--ink-500); font-size:11px; text-transform:uppercase; letter-spacing:0.4px;">Total</th></tr></thead><tbody>';
+                history.slice().reverse().forEach(row => {
+                    const stats = row.stats || {};
+                    html += `<tr style="border-bottom:1px solid var(--line);">
+                        <td style="padding:10px; color:var(--ink-700);">${new Date(row.timestamp).toLocaleTimeString()}</td>
+                        <td style="padding:10px; text-align:center; color:var(--ink-700);">${stats.cars || 0}</td>
+                        <td style="padding:10px; text-align:center; color:var(--ink-700);">${(stats.buses||0) + (stats.trucks||0)}</td>
+                        <td style="padding:10px; text-align:center; font-weight:600; color:var(--ink-900);">${row.vehicles}</td>
+                    </tr>`;
+                });
+                html += '</tbody></table>';
+                tableDiv.innerHTML = html;
+            }
+        }
+    } catch(e) { console.error("Erreur Analytics", e); }
+}
+
+async function setSource(type) {
+    const container = document.getElementById('videoContainer');
+    if (!container) return;
+    container.innerHTML = '<div style="color:var(--white); font-size:1em;"><i class="fas fa-circle-notch fa-spin"></i> Changement de source...</div>';
+    try {
+        await fetch('/api/set_source', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ type: type }) });
+        showToast("Source configurée, rechargement du flux...", "info");
+        setTimeout(() => {
+            const timestamp = new Date().getTime();
+            container.innerHTML = `<img id="videoStream" src="/video_feed?t=${timestamp}" style="width:100%; border-radius:8px; border:1px solid var(--line);" onerror="this.src='/video_feed?retry=${timestamp}'">`;
+            showToast("Flux vidéo rétabli !", "success");
+        }, 1500);
+    } catch(e) {
+        container.innerHTML = '<div style="color:var(--danger)">Erreur de connexion</div>';
+        showToast("Erreur API", "error");
+    }
+}
+
+// ==================== INIT GLOBAL ====================
+const originalOnLoad = window.onload;
+window.onload = () => {
+    initMap();
+    setInterval(fetchStatus, 500);
+    loadIncidents();
+    setInterval(loadIncidents, 5000);
+    loadAnalytics();
+    setInterval(loadAnalytics, 5000);
+    if (originalOnLoad) originalOnLoad();
+    initVoiceControl();
+
+    const dropZone = document.getElementById('dropZone');
+    const vInput = document.getElementById('videoInput');
+    if(dropZone && vInput) {
+        dropZone.onclick = () => vInput.click();
+        vInput.onchange = () => {
+            document.getElementById('fileName').innerText = vInput.files[0].name;
+            document.getElementById('fileInfo').style.display='block';
+            document.getElementById('uploadBtn').disabled=false;
+        };
+        document.getElementById('uploadBtn').onclick = async () => {
+            const f = new FormData(); f.append('file', vInput.files[0]);
+            await fetch('/api/upload_video', {method:'POST', body:f});
+            showToast("Analyse terminée");
+        };
+    }
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+    const analyticsLink = document.querySelector('a[href="/analytics"]');
+    if (analyticsLink) analyticsLink.addEventListener('click', loadAnalytics);
+});
+</script>
+<script>
+(function () {
+  function apply(d) {
+    for (const k in d.leds) {
+      const on = d.leds[k];
+      const a = document.getElementById(k);
+      const b = document.getElementById('led' + k.charAt(0).toUpperCase() + k.slice(1));
+      if (a) a.classList.toggle('on', on);
+      if (b) b.classList.toggle('on', on);
+    }
+    const t1 = document.getElementById('trafficLight1');
+    const t2 = document.getElementById('trafficLight2');
+    if (t1) t1.classList.toggle('active', d.current_traffic_light === 1);
+    if (t2) t2.classList.toggle('active', d.current_traffic_light === 2);
+  }
+  const es = new EventSource('/api/stream');
+  es.onmessage = e => apply(JSON.parse(e.data));
+})();
+</script>
+<script>
+window.getTimerConfig = function () {
+    try {
+        const c = JSON.parse(localStorage.getItem('timerConfig'));
+        return {
+            yellow: Number(c && c.yellow) > 0 ? Number(c.yellow) : 4,
+            green:  Number(c && c.green)  > 0 ? Number(c.green)  : 5
+        };
+    } catch (e) { return { yellow: 4, green: 5 }; }
+};
+</script>
+</body>
+</html>
