@@ -1,41 +1,42 @@
 {% extends "base.html" %}
 {% set active = 'map' %}
-{% block title %}Carte Live — Feu Rouge Intelligent{% endblock %}
-{% block navbar_title %}Carte Live & Incidents{% endblock %}
+{% block title %}Carte — GRID CONTROL{% endblock %}
+{% block navbar_title %}Carte Live{% endblock %}
+{% block subtitle %}Incidents · Signalement{% endblock %}
+
 {% block content %}
-<div class="content-section active" id="section-map">
-    <div class="container">
-        <div class="card map-card">
-            <div class="map-overlay-controls">
-                <h3><i class="fas fa-satellite-dish" style="color:var(--primary)"></i> Live Traffic</h3>
-                <button class="btn btn-primary" onclick="detectTrafficIncidents()" style="padding: 7px 14px; font-size: 12px;"><i class="fas fa-radar"></i> Scanner Zone</button>
-            </div>
-            <div id="map"></div>
+<div class="bento">
+    <div class="b-8 map-container" style="padding:0;">
+        <div style="position:absolute; top:16px; left:16px; z-index:500; background:var(--surface); padding:10px 14px; border-radius:12px; border:1px solid var(--border); display:flex; gap:12px; align-items:center;">
+            <strong style="font-size:13px;">Live Traffic</strong>
+            <button class="btn btn-primary btn-sm" onclick="detectTrafficIncidents()">
+                <i class="fas fa-radar"></i> Scanner
+            </button>
         </div>
-        <div class="card incidents-card">
-            <div style="border-bottom: 1px solid var(--line); padding-bottom: 14px;">
-                <h3><i class="fas fa-exclamation-circle"></i> Signalement</h3>
-                <form id="incidentForm" style="display:flex; flex-direction:column; gap:10px;">
-                    <div>
-                        <label style="font-size:11px; font-weight:600; color:var(--ink-500); text-transform:uppercase; letter-spacing:0.4px;">Type</label>
-                        <select id="incType" class="chat-input" style="padding:8px;">
-                            <option value="roadwork">🚧 Travaux</option>
-                            <option value="accident">💥 Accident</option>
-                            <option value="congestion">🚗 Bouchon</option>
-                        </select>
-                    </div>
-                    <div style="display:flex; gap:10px;">
-                        <div style="flex:1;"><label style="font-size:11px; font-weight:600; color:var(--ink-500); text-transform:uppercase; letter-spacing:0.4px;">Lieu</label><select id="incLight" class="chat-input" style="padding:8px;"><option value="1">Feu 1</option><option value="2">Feu 2</option></select></div>
-                        <div style="flex:1;"><label style="font-size:11px; font-weight:600; color:var(--ink-500); text-transform:uppercase; letter-spacing:0.4px;">Gravité</label><select id="incidentSeverity" class="chat-input" style="padding:8px;"><option value="medium">Moyen</option><option value="high">Critique</option></select></div>
-                    </div>
-                    <button type="button" class="btn btn-danger" onclick="createIncident()" style="justify-content: center; margin-top:5px;"><i class="fas fa-plus"></i> Ajouter l'incident</button>
-                </form>
+        <div id="map"></div>
+    </div>
+
+    <div class="b-4">
+        <div class="bento-title"><i class="fas fa-exclamation-circle"></i> Signalement</div>
+        <form id="incidentForm" style="display:flex; flex-direction:column; gap:10px;">
+            <select id="incType" class="input">
+                <option value="roadwork">🚧 Travaux</option>
+                <option value="accident">💥 Accident</option>
+                <option value="congestion">🚗 Bouchon</option>
+            </select>
+            <div style="display:flex; gap:8px;">
+                <select id="incLight" class="input"><option value="1">Feu 1</option><option value="2">Feu 2</option></select>
+                <select id="incidentSeverity" class="input"><option value="medium">Moyen</option><option value="high">Critique</option></select>
             </div>
-            <div class="incidents-scroll-area">
-                <h4 style="font-size:11px; color:var(--ink-500); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:10px; font-weight:600;">Incidents en cours</h4>
-                <div id="incidentsList">
-                    <p style="text-align:center; color:var(--ink-500); font-size:13px; margin-top:20px;"><i class="fas fa-check-circle" style="color:var(--success); font-size:24px; display:block; margin-bottom:5px;"></i>Aucun incident signalé</p>
-                </div>
+            <button type="button" class="btn btn-danger" onclick="createIncident()" style="width:100%;">
+                <i class="fas fa-plus"></i> Ajouter
+            </button>
+        </form>
+
+        <div style="margin-top:24px;">
+            <div class="bento-title" style="font-size:10px;">En cours</div>
+            <div id="incidentsList">
+                <p style="color:var(--text-lo); font-size:12px; text-align:center; padding:20px 0;">Aucun incident</p>
             </div>
         </div>
     </div>

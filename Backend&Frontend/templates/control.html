@@ -1,18 +1,63 @@
 {% extends "base.html" %}
 {% set active = 'control' %}
-{% block title %}Manuel & LEDs — Feu Rouge Intelligent{% endblock %}
-{% block navbar_title %}Contrôle Manuel & LEDs{% endblock %}
+{% block title %}Contrôle LEDs — GRID CONTROL{% endblock %}
+{% block navbar_title %}Contrôle LEDs{% endblock %}
+{% block subtitle %}6 LEDs · 2 feux{% endblock %}
+
 {% block content %}
-<div class="content-section active">
-    <div class="card">
-        <h3><i class="fas fa-lightbulb"></i> Contrôle Individuel des LEDs</h3>
-        <div class="led-grid">
-            <div class="led-item"><div class="led-indicator red" id="ledRed1"></div><h4>Rouge 1</h4><div class="led-controls"><button class="btn btn-secondary" onclick="setLED('red1_on')"><i class="fas fa-power-off"></i> ON</button><button class="btn btn-ghost" onclick="setLED('red1_off')">OFF</button></div></div>
-            <div class="led-item"><div class="led-indicator yellow" id="ledYellow1"></div><h4>Jaune 1</h4><div class="led-controls"><button class="btn btn-secondary" onclick="setLED('yellow1_on')"><i class="fas fa-power-off"></i> ON</button><button class="btn btn-ghost" onclick="setLED('yellow1_off')">OFF</button></div></div>
-            <div class="led-item"><div class="led-indicator green" id="ledGreen1"></div><h4>Vert 1</h4><div class="led-controls"><button class="btn btn-secondary" onclick="setLED('green1_on')"><i class="fas fa-power-off"></i> ON</button><button class="btn btn-ghost" onclick="setLED('green1_off')">OFF</button></div></div>
-            <div class="led-item"><div class="led-indicator red" id="ledRed2"></div><h4>Rouge 2</h4><div class="led-controls"><button class="btn btn-secondary" onclick="setLED('red2_on')"><i class="fas fa-power-off"></i> ON</button><button class="btn btn-ghost" onclick="setLED('red2_off')">OFF</button></div></div>
-            <div class="led-item"><div class="led-indicator yellow" id="ledYellow2"></div><h4>Jaune 2</h4><div class="led-controls"><button class="btn btn-secondary" onclick="setLED('yellow2_on')"><i class="fas fa-power-off"></i> ON</button><button class="btn btn-ghost" onclick="setLED('yellow2_off')">OFF</button></div></div>
-            <div class="led-item"><div class="led-indicator green" id="ledGreen2"></div><h4>Vert 2</h4><div class="led-controls"><button class="btn btn-secondary" onclick="setLED('green2_on')"><i class="fas fa-power-off"></i> ON</button><button class="btn btn-ghost" onclick="setLED('green2_off')">OFF</button></div></div>
+<div class="bento">
+    <div class="b-12">
+        <div class="bento-title"><i class="fas fa-lightbulb"></i> Contrôle Individuel <span class="num">6 LEDs</span></div>
+
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:14px;">
+            <div class="led-card">
+                <div class="led-dot red" id="ledRed1"></div>
+                <h4>Rouge 1</h4>
+                <div class="led-actions">
+                    <button class="btn btn-secondary btn-sm" onclick="setLED('red1_on')">ON</button>
+                    <button class="btn btn-ghost btn-sm" onclick="setLED('red1_off')">OFF</button>
+                </div>
+            </div>
+            <div class="led-card">
+                <div class="led-dot yellow" id="ledYellow1"></div>
+                <h4>Jaune 1</h4>
+                <div class="led-actions">
+                    <button class="btn btn-secondary btn-sm" onclick="setLED('yellow1_on')">ON</button>
+                    <button class="btn btn-ghost btn-sm" onclick="setLED('yellow1_off')">OFF</button>
+                </div>
+            </div>
+            <div class="led-card">
+                <div class="led-dot green" id="ledGreen1"></div>
+                <h4>Vert 1</h4>
+                <div class="led-actions">
+                    <button class="btn btn-secondary btn-sm" onclick="setLED('green1_on')">ON</button>
+                    <button class="btn btn-ghost btn-sm" onclick="setLED('green1_off')">OFF</button>
+                </div>
+            </div>
+            <div class="led-card">
+                <div class="led-dot red" id="ledRed2"></div>
+                <h4>Rouge 2</h4>
+                <div class="led-actions">
+                    <button class="btn btn-secondary btn-sm" onclick="setLED('red2_on')">ON</button>
+                    <button class="btn btn-ghost btn-sm" onclick="setLED('red2_off')">OFF</button>
+                </div>
+            </div>
+            <div class="led-card">
+                <div class="led-dot yellow" id="ledYellow2"></div>
+                <h4>Jaune 2</h4>
+                <div class="led-actions">
+                    <button class="btn btn-secondary btn-sm" onclick="setLED('yellow2_on')">ON</button>
+                    <button class="btn btn-ghost btn-sm" onclick="setLED('yellow2_off')">OFF</button>
+                </div>
+            </div>
+            <div class="led-card">
+                <div class="led-dot green" id="ledGreen2"></div>
+                <h4>Vert 2</h4>
+                <div class="led-actions">
+                    <button class="btn btn-secondary btn-sm" onclick="setLED('green2_on')">ON</button>
+                    <button class="btn btn-ghost btn-sm" onclick="setLED('green2_off')">OFF</button>
+                </div>
+            </div>
         </div>
     </div>
 </div>

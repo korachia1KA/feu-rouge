@@ -1,15 +1,25 @@
 {% extends "base.html" %}
 {% set active = 'chat' %}
-{% block title %}Chatbot IA — Feu Rouge Intelligent{% endblock %}
-{% block navbar_title %}Chatbot IA{% endblock %}
+{% block title %}Assistant IA — GRID CONTROL{% endblock %}
+{% block navbar_title %}Assistant IA{% endblock %}
+{% block subtitle %}DeepSeek · Ollama{% endblock %}
+
 {% block content %}
-<div class="content-section active">
-    <div class="card">
-        <h3><i class="fas fa-robot"></i> Assistant IA</h3>
+<div class="bento">
+    <div class="b-12">
+        <div class="bento-title"><i class="fas fa-robot"></i> Assistant conversationnel</div>
         <div id="chatBox" class="chat-box"></div>
         <div style="display:flex; gap:10px;">
-            <input type="text" id="chatInput" class="chat-input" placeholder="Ex: Switch vers feu 1...">
-            <button class="btn btn-primary" onclick="sendChat()">Envoyer</button>
+            <input type="text" id="chatInput" class="chat-input" placeholder="Ex: Switch vers feu 1..." style="flex:1;"
+                   onkeydown="if(event.key==='Enter') sendChat();">
+            <button class="btn btn-primary" onclick="sendChat()" style="padding:11px 24px;"><i class="fas fa-paper-plane"></i> Envoyer</button>
+        </div>
+        <div style="margin-top:16px; display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="btn btn-ghost btn-sm" onclick="fillChat('Pause')">⏸ Pause</button>
+            <button class="btn btn-ghost btn-sm" onclick="fillChat('Reprendre')">▶ Reprendre</button>
+            <button class="btn btn-ghost btn-sm" onclick="fillChat('Switch vers feu 1')">⬅ Feu 1</button>
+            <button class="btn btn-ghost btn-sm" onclick="fillChat('Switch vers feu 2')">Feu 2 ➡</button>
+            <button class="btn btn-ghost btn-sm" onclick="fillChat('Mode trafic IA')">🤖 Mode IA</button>
         </div>
     </div>
 </div>

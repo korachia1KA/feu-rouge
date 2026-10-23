@@ -1,16 +1,36 @@
 {% extends "base.html" %}
-{% set active = 'analytics' %}
-{% block title %}Analytics — Feu Rouge Intelligent{% endblock %}
-{% block navbar_title %}Analytics & Historique{% endblock %}
+{% set active = 'n8n' %}
+{% block title %}N8N — GRID CONTROL{% endblock %}
+{% block navbar_title %}Automatisation{% endblock %}
+{% block subtitle %}N8N · Webhooks{% endblock %}
+
 {% block content %}
-<div class="content-section active">
-    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px,1fr)); gap:16px; margin-bottom:18px;">
-        <div class="analytics-card"><h4>Moyenne Véhicules</h4><div class="value" id="avgVehicles">-</div></div>
-        <div class="analytics-card"><h4>Total Entrées</h4><div class="value" id="historyCount">-</div></div>
+<div class="bento">
+    <div class="b-5">
+        <div class="bento-title"><i class="fas fa-bolt"></i> État du workflow</div>
+        <div style="padding:20px; background:var(--surface-2); border-radius:12px; border:1px solid var(--border); margin-bottom:16px;">
+            <div class="stat-label">Statut</div>
+            <div style="font-size:20px; font-weight:600;"><span id="n8nStatus" style="color:var(--amber);">Vérification...</span></div>
+        </div>
+        <div style="padding:16px; background:var(--surface-2); border-radius:12px; border:1px solid var(--border);">
+            <div class="stat-label" style="margin-bottom:8px;">Webhook</div>
+            <code style="font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--coral); word-break:break-all;">http://localhost:5678/webhook/traffic-alert</code>
+        </div>
     </div>
-    <div class="card">
-        <h3>Historique du Trafic</h3>
-        <div id="trafficHistoryTable" style="max-height:400px; overflow:auto;"></div>
+
+    <div class="b-7">
+        <div class="bento-title"><i class="fas fa-project-diagram"></i> Workflow</div>
+        <div style="padding:20px; background:var(--bg-2); border-radius:12px; border:1px solid var(--border); font-family:'JetBrains Mono',monospace; font-size:12px; line-height:2.2; color:var(--text-mid);">
+            <div style="color:var(--coral);">▸ Webhook (POST)</div>
+            <div style="margin-left:16px; color:var(--text-lo);">│</div>
+            <div style="margin-left:16px;">├─ <span style="color:var(--amber);">Switch (Rules)</span></div>
+            <div style="margin-left:32px; color:var(--text-lo);">│</div>
+            <div style="margin-left:32px;">├─ <span style="color:var(--mint);">Send Email</span></div>
+            <div style="margin-left:32px;">└─ <span style="color:var(--coral);">Send SMS/WhatsApp</span></div>
+        </div>
+        <div style="margin-top:16px; padding:14px; background:var(--amber-soft); border-radius:12px; border:1px solid var(--amber);">
+            <p style="font-size:12px; color:var(--text-mid);">Événements : <strong style="color:var(--amber);">ambulance_detected · congestion_detected</strong></p>
+        </div>
     </div>
 </div>
 {% endblock %}

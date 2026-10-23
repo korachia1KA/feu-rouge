@@ -1,13 +1,15 @@
 {% extends "base.html" %}
 {% set active = 'incidents' %}
-{% block title %}Incidents — Feu Rouge Intelligent{% endblock %}
-{% block navbar_title %}Tous les Incidents{% endblock %}
+{% block title %}Incidents — GRID CONTROL{% endblock %}
+{% block navbar_title %}Incidents{% endblock %}
+{% block subtitle %}Liste complète{% endblock %}
+
 {% block content %}
-<div class="content-section active">
-    <div class="container">
-        <div class="card">
-            <h3><i class="fas fa-exclamation-triangle"></i> Tous les Incidents</h3>
-            <div id="incidentsListFull"><p style="text-align:center; color:var(--ink-500);">Chargement...</p></div>
+<div class="bento">
+    <div class="b-12">
+        <div class="bento-title"><i class="fas fa-exclamation-triangle"></i> Tous les incidents</div>
+        <div id="incidentsListFull">
+            <p style="text-align:center; color:var(--text-lo); padding:20px;">Chargement...</p>
         </div>
     </div>
 </div>

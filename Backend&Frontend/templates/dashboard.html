@@ -1,73 +1,87 @@
 {% extends "base.html" %}
 {% set active = 'dashboard' %}
-{% block title %}Tableau de bord — Feu Rouge Intelligent{% endblock %}
-{% block navbar_title %}Système de Feux Intelligents{% endblock %}
+{% block title %}Dashboard — GRID CONTROL{% endblock %}
+{% block navbar_title %}Dashboard{% endblock %}
+{% block subtitle %}Vue d'ensemble{% endblock %}
+
 {% block content %}
-<div class="content-section active">
-    <div class="container">
-        <div class="card">
-            <h3><i class="fas fa-sliders-h"></i> Mode de Contrôle</h3>
-            <div class="mode-selector">
-                <div class="mode-btn active" data-mode="manual" onclick="setMode('manual')"><i class="fas fa-hand-pointer"></i> Manuel</div>
-                <div class="mode-btn" data-mode="switching" onclick="setMode('switching')" style="border: 2px solid var(--warning);"><i class="fas fa-random"></i> Switching</div>
-                <div class="mode-btn" data-mode="traffic" onclick="setMode('traffic')"><i class="fas fa-car"></i> Trafic IA</div>
-                <div class="mode-btn" data-mode="timer" onclick="setMode('timer')"><i class="fas fa-clock"></i> Timer</div>
-                <div class="mode-btn" data-mode="chatbot" onclick="setMode('chatbot')"><i class="fas fa-robot"></i> Chatbot</div>
-            </div>
+<div class="bento">
 
-            <div class="traffic-light-wrap">
-                <div class="traffic-light" id="trafficLight1">
-                    <h4>Feu 1 (Av. Mohamed VI)</h4>
-                    <div class="light-stack">
-                        <div class="light red" id="red1"></div>
-                        <div class="light yellow" id="yellow1"></div>
-                        <div class="light green" id="green1"></div>
-                    </div>
-                </div>
-                <div class="traffic-light" id="trafficLight2">
-                    <h4>Feu 2 (Rue El Khattabi)</h4>
-                    <div class="light-stack">
-                        <div class="light red" id="red2"></div>
-                        <div class="light yellow" id="yellow2"></div>
-                        <div class="light green" id="green2"></div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="switchingControls">
-                <h3 style="color:#c2410c"><i class="fas fa-gamepad"></i> Contrôle Direct</h3>
-                <div class="switch-btn-grid">
-                    <button class="btn btn-primary" onclick="apiCall('/api/switch', {target:1})">⬅️ Feu 1 VERT</button>
-                    <button class="btn btn-primary" onclick="apiCall('/api/switch', {target:2})">Feu 2 VERT ➡️</button>
-                    <button class="btn btn-danger" onclick="apiCall('/api/pause', {})">⏸️ PAUSE</button>
-                    <button class="btn btn-secondary" onclick="apiCall('/api/resume', {})">▶️ REPRISE</button>
-                </div>
-            </div>
-
-            <div id="manualMsg" style="text-align:center; color:var(--ink-500); margin-top:15px; font-style:italic; font-size:13px;">
-                Passez en mode "Switching" pour afficher les boutons de contrôle des feux.
-            </div>
+    <!-- MODE SELECTOR -->
+    <div class="b-12">
+        <div class="bento-title"><i class="fas fa-sliders-h"></i> Mode de Contrôle <span class="num">01</span></div>
+        <div class="mode-pills">
+            <div class="mode-pill active" data-mode="manual"><i class="fas fa-hand-pointer"></i> Manuel</div>
+            <div class="mode-pill" data-mode="switching"><i class="fas fa-random"></i> Switching</div>
+            <div class="mode-pill" data-mode="traffic"><i class="fas fa-car"></i> Trafic IA</div>
+            <div class="mode-pill" data-mode="timer"><i class="fas fa-clock"></i> Timer</div>
+            <div class="mode-pill" data-mode="chatbot"><i class="fas fa-robot"></i> Chatbot</div>
         </div>
+    </div>
 
-        <div>
-            <div class="card">
-                <h3><i class="fas fa-video"></i> Flux Vidéo YOLO</h3>
-                <img id="videoFeed" src="/video_feed" style="width:100%; border-radius:8px;">
+    <!-- FEU 1 -->
+    <div class="b-6">
+        <div class="traffic-h" id="trafficLight1">
+            <div>
+                <div class="traffic-h-label">Feu 1</div>
+                <div style="font-size:14px; color:var(--text); font-weight:600;">Av. Mohamed VI</div>
             </div>
-            <div class="card">
-                <h3><i class="fas fa-chart-bar"></i> Trafic Temps Réel</h3>
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; text-align:center;">
-                    <div style="background:var(--primary-soft); padding:12px; border-radius:8px; border:1px solid var(--line);">
-                        <div style="font-size:20px; font-weight:700; color:var(--primary);" id="statCars">0</div>
-                        <small style="color:var(--ink-500);">Voitures</small>
-                    </div>
-                    <div style="background:var(--success-soft); padding:12px; border-radius:8px; border:1px solid var(--line);">
-                        <div style="font-size:20px; font-weight:700; color:var(--success);" id="statPedestrians">0</div>
-                        <small style="color:var(--ink-500);">Piétons</small>
-                    </div>
-                </div>
+            <div class="traffic-h-lights">
+                <div class="h-light red" id="red1"></div>
+                <div class="h-light yellow" id="yellow1"></div>
+                <div class="h-light green" id="green1"></div>
             </div>
         </div>
     </div>
+
+    <!-- FEU 2 -->
+    <div class="b-6">
+        <div class="traffic-h" id="trafficLight2">
+            <div>
+                <div class="traffic-h-label">Feu 2</div>
+                <div style="font-size:14px; color:var(--text); font-weight:600;">Rue El Khattabi</div>
+            </div>
+            <div class="traffic-h-lights">
+                <div class="h-light red" id="red2"></div>
+                <div class="h-light yellow" id="yellow2"></div>
+                <div class="h-light green" id="green2"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SWITCHING CONTROLS -->
+    <div class="b-12" id="switchingControls" style="display:none;">
+        <div class="bento-title"><i class="fas fa-gamepad"></i> Contrôle Direct <span class="num">02</span></div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <button class="btn btn-primary" onclick="apiCall('/api/switch', {target:1})">⬅ Feu 1 VERT</button>
+            <button class="btn btn-primary" onclick="apiCall('/api/switch', {target:2})">Feu 2 VERT ➡</button>
+            <button class="btn btn-danger" onclick="apiCall('/api/pause', {})">⏸ PAUSE</button>
+            <button class="btn btn-secondary" onclick="apiCall('/api/resume', {})">▶ REPRISE</button>
+        </div>
+    </div>
+    <div class="b-12" id="manualMsg" style="text-align:center; color:var(--text-lo); font-style:italic; font-size:13px;">
+        Passez en mode "Switching" pour afficher les boutons de contrôle.
+    </div>
+
+    <!-- STAT CARS -->
+    <div class="b-3 stat-box">
+        <div class="stat-label">Voitures</div>
+        <div class="stat-value" id="statCars">0</div>
+        <div class="stat-sub">détectées maintenant</div>
+    </div>
+
+    <!-- STAT PEDESTRIANS -->
+    <div class="b-3 stat-box">
+        <div class="stat-label">Piétons</div>
+        <div class="stat-value" id="statPedestrians" style="color:var(--mint);">0</div>
+        <div class="stat-sub">détectés maintenant</div>
+    </div>
+
+    <!-- VIDEO -->
+    <div class="b-6" style="padding:0; overflow:hidden;">
+        <div class="bento-title" style="padding:24px 24px 0;"><i class="fas fa-video"></i> Flux vidéo YOLO <span class="num">LIVE</span></div>
+        <img id="videoFeed" src="/video_feed" style="width:100%; display:block; margin-top:16px;">
+    </div>
+
 </div>
 {% endblock %}
