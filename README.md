@@ -403,7 +403,7 @@ yolov8n.pt
 
 ## 👤 Auteur
 
-**Abdelghafour Korachi** — étudiant en ingénierie des system d'information
+**Abdelghafour Korachi** — étudiant en ingénierie des systemes d'information
 GitHub : [@korachia1KA](https://github.com/korachia1KA) · LinkedIn : [abdelghafour-korachi](https://www.linkedin.com/in/abdelghafour-korachi-0a33773a8/)
 
 ---
