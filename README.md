@@ -403,11 +403,11 @@ yolov8n.pt
 
 ## 👤 Auteur
 
-**Abdelghafour Korachi** — étudiant en ingénierie télécommunications  
+**Abdelghafour Korachi** — étudiant en ingénierie des system d'information
 GitHub : [@korachia1KA](https://github.com/korachia1KA) · LinkedIn : [abdelghafour-korachi](https://www.linkedin.com/in/abdelghafour-korachi-0a33773a8/)
 
 ---
 
 ## 📄 Licence
 
-Projet académique — licence à définir (MIT recommandée si vous souhaitez le partager).
+Projet académique — licence MIT.
